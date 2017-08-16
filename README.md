@@ -15,7 +15,7 @@ use chrono::{TimeZone, Utc};
 use std::io::Write;
 
 fn main() {
-    let dt = Utc.ymd(2017, 8, 15).and_hms(5, 0, 0);
+    let dt = Utc.ymd(2017, 8, 15).and_hms(17, 0, 0);
     let geojson_feature = night_coord_geojson(&dt, 10., 90., 180., -90.0, -180.).unwrap();
     let feature_collection = geojson::FeatureCollection {
         bbox: None,
