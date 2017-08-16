@@ -1,0 +1,13 @@
+[package]
+name = "nightcoords"
+version = "0.1.0"
+authors = ["Matthieu Viry <matthieu.viry@cnrs.fr>"]
+
+[dependencies]
+chrono = "0.4.0"
+geojson = { version = "^0.8", optional = true }
+serde = { version = "^1.0", optional = true }
+serde_json = { version = "^1.0", optional = true }
+
+[features]
+togeojson = ["serde", "serde_json", "geojson"]
