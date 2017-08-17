@@ -6,7 +6,7 @@ extern crate geojson;
 extern crate chrono;
 extern crate serde_json;
 
-use nightcoords::night_coord_geojson;
+use nightcoords::{Mode, night_coord_geojson};
 use chrono::{TimeZone, Utc};
 use std::io::Write;
 
@@ -17,10 +17,10 @@ fn main() {
     // month and day count start at 1 in `chrono` library:
     for month in 1..13 {
         for day in 1..8 {
-            for hour in 0..23 {
+            for hour in 0..24 {
                 let dt = Utc.ymd(2017, month, day).and_hms(hour, 0, 10);
-                let mut geojson_feature = night_coord_geojson(&dt, 10., 90., 180., -90.0, -180.)
-                    .unwrap();
+                let mut geojson_feature =
+                    night_coord_geojson(&dt, 10., 90., 180., -90.0, -180., &Mode::Night).unwrap();
                 geojson_feature.id = Some(serde_json::Value::from(c));
                 v.push(geojson_feature);
                 c += 1;

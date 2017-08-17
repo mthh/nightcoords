@@ -1,6 +1,6 @@
 # nightcoords
 
-Get the night world geometry at a given date and time.
+Get the night/day world geometry at a given date and time.
 
 # Example:
 Get the geometry of the night zone at 5pm (UTC) on 15th august 2017 and save it in a geojson Feature Collection:
@@ -10,13 +10,13 @@ extern crate nightcoords;
 extern crate geojson;
 extern crate chrono;
 
-use nightcoords::night_coord_geojson;
+use nightcoords::{Mode, night_coord_geojson};
 use chrono::{TimeZone, Utc};
 use std::io::Write;
 
 fn main() {
     let dt = Utc.ymd(2017, 8, 15).and_hms(17, 0, 0);
-    let geojson_feature = night_coord_geojson(&dt, 10., 90., 180., -90.0, -180.).unwrap();
+    let geojson_feature = night_coord_geojson(&dt, 10., 90., 180., -90.0, -180., &Mode::Night).unwrap();
     let feature_collection = geojson::FeatureCollection {
         bbox: None,
         features: vec![geojson_feature],

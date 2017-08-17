@@ -15,6 +15,11 @@ use geojson::{GeoJson, Geometry, Value, Feature};
 
 pub type UtcDateTime = DateTime<Utc>;
 
+pub enum Mode {
+    Night,
+    Day,
+}
+
 enum Calendar {
     Julian,
     Gregorian,
@@ -32,9 +37,10 @@ pub fn night_coord_geojson(date: &UtcDateTime,
                            latmax: f64,
                            lonmax: f64,
                            latmin: f64,
-                           lonmin: f64)
+                           lonmin: f64,
+                           mode: &Mode)
                            -> Result<geojson::Feature, &'static str> {
-    let exterior_ring = match night_coord(&date, delta, latmax, lonmax, latmin, lonmin) {
+    let exterior_ring = match night_coord(&date, delta, latmax, lonmax, latmin, lonmin, &mode) {
         Ok(v) => v,
         Err(e) => return Err(e),
     };
@@ -59,7 +65,8 @@ pub fn night_coord(datetime: &UtcDateTime,
                    mut latmax: f64,
                    mut lonmax: f64,
                    mut latmin: f64,
-                   mut lonmin: f64)
+                   mut lonmin: f64,
+                   mode: &Mode)
                    -> Result<Vec<Vec<f64>>, &'static str> {
     if latmax < 80. {
         latmax = 80.;
@@ -90,7 +97,7 @@ pub fn night_coord(datetime: &UtcDateTime,
     for i in 0..n {
         exterior_ring.push(vec![c_lon[i], c_lat[i]]);
     }
-    let lat_close = get_lat_close(dec, latmax, latmin);
+    let lat_close = get_lat_close(dec, latmax, latmin, &mode);
     exterior_ring.push(vec![lonmax, lat_close]);
     exterior_ring.push(vec![lonmin, lat_close]);
     exterior_ring.push(vec![c_lon[0], c_lat[0]]);
@@ -180,6 +187,9 @@ fn daynight_terminator(dt: &UtcDateTime,
     Ok((lons, lats, tau, dec))
 }
 
-fn get_lat_close(dec: f64, latmax: f64, latmin: f64) -> f64 {
-    if dec > 0.0 { latmin } else { latmax }
+fn get_lat_close(dec: f64, latmax: f64, latmin: f64, mode: &Mode) -> f64 {
+    match mode {
+        &Mode::Night => if dec > 0.0 { latmax } else { latmin },
+        &Mode::Day => if dec > 0.0 { latmin } else { latmax },
+    }
 }
